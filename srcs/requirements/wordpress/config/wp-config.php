@@ -23,10 +23,10 @@
 define( 'DB_NAME', getenv('MARIADB_NAME') );
 
 /** Database username */
-define( 'DB_USER', getenv('MARIADB_USER') );
+define( 'DB_USER', getenv('MARIADB_ADMIN_USER') );
 
 /** Database password */
-define( 'DB_PASSWORD', getenv('MARIADB_PSWD') );
+define( 'DB_PASSWORD', getenv('MARIADB_ROOT_PSWD') );
 
 /** Database hostname */
 define( 'DB_HOST', 'mariadb' );
