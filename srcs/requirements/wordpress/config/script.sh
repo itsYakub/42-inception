@@ -1,37 +1,49 @@
 #!/bin/bash
 
-mkdir /var/www/
-mkdir /var/www/html/
-cd /var/www/html
-
-rm -rf *
+sed -i -e 's/listen = .*/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf
 
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
 mv wp-cli.phar /usr/local/bin/wp
 
-wp core download --allow-root
-mv /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-mv /wp-config.php /var/www/html/wp-config.php
+sleep 10
 
-wp core install \
-	--url=$DOMAIN_NAME/ \
-	--title=$WP_TITLE \
-	--admin_user=$WP_ADMIN_USR \
-	--admin_password=$WP_ADMIN_PWD \
-	--admin_email=$WP_ADMIN_EMAIL \
-	--skip-email \
-	--allow-root
+if [ ! -f /var/www/html/wp-config.pxp ]; then
 
-wp user create $WP_USER $WP_EMAIL \
-	--role=author \
-	--user_pass=$WP_PSWD \
-	--allow-root
+	mkdir /var/www/
+	mkdir /var/www/html/
+	cd /var/www/html
+	rm -rf *
 
-wp theme install astra --activate --allow-root
-wp plugin install redis-cache --activate --allow-root
-wp plugin update --all --allow-root
+	wp core download --allow-root
 
-sed -i 's/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf
+	wp config create \
+		--dbname=$MARIADB_DBNAME \
+		--dbuser=$MARIADB_ADMIN_USER \
+		--dbpass=$MARIADB_ROOT_PSWD \
+		--dbhost=mariadb:3306 \
+		--allow-root \
+		--skip-check
+
+	wp core install \
+		--url=$DOMAIN_NAME/ \
+		--title=$WP_TITLE \
+		--admin_user=$WP_ADMIN_USR \
+		--admin_password=$MARIADB_ROOT_PSWD \
+		--admin_email=$WP_ADMIN_EMAIL \
+		--skip-email \
+		--allow-root
+
+	wp user create $WP_USER $WP_EMAIL \
+		--role=author \
+		--user_pass=$WP_PSWD \
+		--allow-root
+
+	wp theme install astra --activate --allow-root
+	wp plugin install redis-cache --activate --allow-root
+	wp plugin update --all --allow-root
+
+	chmod +x /var/www/html/wp-content
+fi
 
 /usr/sbin/php-fpm7.4 --nodaemonize

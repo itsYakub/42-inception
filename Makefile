@@ -1,13 +1,13 @@
 DOCKER_COMPOSE = ./srcs/docker-compose.yaml
 
-all : create build up
+all : create up
 
 create:
 	@mkdir -p ~/data/wordpress
 	@mkdir -p ~/data/mariadb
 
 up :
-	@docker compose -f $(DOCKER_COMPOSE) up
+	@docker compose -f $(DOCKER_COMPOSE) up -d --no-deps --build --remove-orphans --wait
 
 down :
 	@docker compose -f $(DOCKER_COMPOSE) down
@@ -18,15 +18,12 @@ start :
 stop :
 	@docker compose -f $(DOCKER_COMPOSE) stop
 
-build :
-	@docker compose -f $(DOCKER_COMPOSE) build
-
 remove :
-	@docker system prune --all
+	@docker system prune --all -f
 	@rm -rf ~/data/wordpress/*
 	@rm -rf ~/data/mariadb/*
 
-re : remove all
+re : down remove all
 
 status :
 	@docker ps
