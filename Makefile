@@ -27,3 +27,11 @@ re : down remove all
 
 status :
 	@docker ps
+
+logs:
+	@echo "\n[ LOGS: mariadb ]\n"
+	@docker logs mariadb
+	@echo "\n[ LOGS: wordpress ]\n"
+	@docker logs wordpress
+	@echo "\n[ LOGS: nginx ]\n"
+	@docker logs nginx

@@ -35,3 +35,4 @@ echo '
 } ' >>  /etc/nginx/sites-available/default
 
 nginx -g "daemon off;"
+

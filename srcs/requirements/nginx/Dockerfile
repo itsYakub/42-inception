@@ -4,6 +4,7 @@ RUN apt update -y
 RUN apt upgrade -y
 RUN apt install nginx -y
 RUN apt install openssl -y
+RUN apt install hostsed -y
 
 RUN mkdir /etc/nginx/ssl
 RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
