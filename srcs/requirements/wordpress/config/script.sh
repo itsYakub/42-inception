@@ -1,12 +1,12 @@
 #!/bin/bash
 
+service php7.4-fpm start
+
 sed -i -e 's/listen = .*/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf
 
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
 mv wp-cli.phar /usr/local/bin/wp
-
-sleep 10
 
 if [ ! -f /var/www/html/wp-config.pxp ]; then
 

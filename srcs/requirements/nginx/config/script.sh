@@ -1,20 +1,22 @@
 #!/bin/bash
 
+mkdir /etc/nginx/ssl
 openssl req \
+	-newkey rsa:4096 \
 	-x509 \
-	-nodes \
+	-sha256 \
 	-days 365 \
-	-newkey rsa:2048 \
+	-nodes \
 	-keyout /etc/ssl/private/nginx-selfsigned.key \
 	-out $NGINX_CERTS \
-	-subj "/C=MO/L=KH/O=1337/OU=student/CN=joleksia.42.fr"
+	-subj "/C=PL/ST=Masovia/L=Warsaw/O=42 Warsaw/OU=joleksia/CN=joleksia.42.fr/"
 
 echo "
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
 
-    #server_name www.$WP_DOMAIN $WP_DOMAIN;
+    server_name www.$WP_DOMAIN $WP_DOMAIN;
 
     ssl_certificate $NGINX_CERTS;
     ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;" > /etc/nginx/sites-available/default
@@ -34,5 +36,6 @@ echo '
 	}
 } ' >>  /etc/nginx/sites-available/default
 
-nginx -g "daemon off;"
+hostsed add 127.0.0.1 joleksia42.42.fr
 
+nginx -g "daemon off;"

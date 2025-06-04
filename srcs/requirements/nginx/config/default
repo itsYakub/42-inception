@@ -2,8 +2,7 @@ server {
     listen 443 http2 ssl;
     listen [::]:443 http2 ssl;
 
-    server_name joleksia.42.fr;
-    server_name www.joleksia.42.fr;
+    server_name joleksia.42.fr www.joleksia.42.fr;
 
 	ssl_certificate here_certs;
     ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;

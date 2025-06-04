@@ -1,22 +1,22 @@
+# container's operating system
 FROM debian:bullseye
 
+# containers packages
 RUN apt update -y
 RUN apt upgrade -y
 RUN apt install nginx -y
 RUN apt install openssl -y
 RUN apt install hostsed -y
 
-RUN mkdir /etc/nginx/ssl
-RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
-       -out /etc/nginx/ssl/joleksia.crt \
-       -keyout /etc/nginx/ssl/joleksia.key \
-       -subj "/C=PL/ST=Masovia/L=Warsaw/O=42 Warsaw/OU=joleksia/CN=joleksia/"
-
+# container's config files
 COPY ./config/default /etc/nginx/conf.d
 
+# container's config script
 COPY ./config/script.sh /
 RUN chmod +x /script.sh
 
+# port expose
 EXPOSE 443
 
+# running the config script
 CMD [ "/script.sh" ]
