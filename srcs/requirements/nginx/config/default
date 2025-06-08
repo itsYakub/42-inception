@@ -1,31 +1,18 @@
 server {
-    listen 443 http2 ssl;
-    listen [::]:443 http2 ssl;
-
-    server_name joleksia.42.fr www.joleksia.42.fr;
-
-	ssl_certificate here_certs;
-    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
-
-    ssl_protocols TLSv1.3;
-
-    root /var/www/html;
+    listen 443 ssl;
+    root /var/www/html/;
     index index.php;
 
-    location / {
-        autoindex on;
-        autoindex_format html;
-        try_files $uri $uri/ /index.php?$args;
+    ssl_certificate /etc/nginx/ssl/cert.crt;
+    ssl_certificate_key /etc/nginx/ssl/private.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    
+    location ~ \.php$ {
+		include fastcgi_params;
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass wordpress:9000;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
-
-    location ~ .php$ {
-        if (!-f $document_root$fastcgi_script_name)
-        { 
-            return 404;
-        }
-        try_files $uri =404;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_pass wordpress:9000;
-            }
 }
+
+

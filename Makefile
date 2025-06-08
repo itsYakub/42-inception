@@ -1,37 +1,39 @@
 DOCKER_COMPOSE = ./srcs/docker-compose.yaml
+DOCKER_LOGIN=joleksia
 
-all : create up
+all : up
 
-create:
-	@mkdir -p ~/data/wordpress
-	@mkdir -p ~/data/mariadb
+create :
+	@mkdir -p /home/$(DOCKER_LOGIN)/data/wp
+	@chmod 777 /home/$(DOCKER_LOGIN)/data/wp
+	@mkdir -p /home/$(DOCKER_LOGIN)/data/mdb
+	@chmod 777 /home/$(DOCKER_LOGIN)/data/mdb
+	@hostsed add 127.0.0.1 $(DOCKER_LOGIN).42.fr
 
-up :
-	@docker compose -f $(DOCKER_COMPOSE) up -d --no-deps --build --remove-orphans --wait
+up : create
+	@docker compose -f $(DOCKER_COMPOSE) up -d --no-deps --build
 
 down :
 	@docker compose -f $(DOCKER_COMPOSE) down
 
-start :
-	@docker compose -f $(DOCKER_COMPOSE) start
-
-stop :
-	@docker compose -f $(DOCKER_COMPOSE) stop
-
-remove :
+clean :
+	@rm -rf /home/$(DOCKER_LOGIN)/data
+	@hostsed rm 127.0.0.1 $(DOCKER_LOGIN).42.fr
 	@docker system prune --all -f
-	@rm -rf ~/data/wordpress/*
-	@rm -rf ~/data/mariadb/*
 
-re : down remove all
+fclean : down clean
+
+re : fclean all
 
 status :
 	@docker ps
 
-logs:
+logs :
 	@echo "\n[ LOGS: mariadb ]\n"
 	@docker logs mariadb
 	@echo "\n[ LOGS: wordpress ]\n"
 	@docker logs wordpress
 	@echo "\n[ LOGS: nginx ]\n"
 	@docker logs nginx
+
+.PHONY : create up down clean fclean re
