@@ -2,8 +2,6 @@
 
 set -x
 
-usermod -aG www-data root
-
 sed -i -e 's/listen = .*/listen = 0.0.0.0:9000/g' /etc/php/7.4/fpm/pool.d/www.conf
 mkdir -p /run/php
 
@@ -28,9 +26,9 @@ if ! wp-cli.phar core is-installed 2>/dev/null; then
 		--skip-email \
 		--allow-root
 
-	wp-cli.phar user create $WP_USER $WP_EMAIL \
-		--user_pass=$WP_PSWD \
-		--allow-root
+#	wp-cli.phar user create $WP_USER $WP_EMAIL \
+#		--user_pass=$WP_PSWD \
+#		--allow-root
 
 fi
 

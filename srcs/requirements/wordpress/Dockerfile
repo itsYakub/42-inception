@@ -21,6 +21,8 @@ RUN mv wp-cli.phar /usr/local/bin/wp-cli.phar
 COPY ./config/script.sh /
 RUN chmod 777 /script.sh
 
+RUN usermod -aG www-data root
+
 # port expose
 EXPOSE 9000
 
