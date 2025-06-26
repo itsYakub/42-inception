@@ -11,8 +11,11 @@ RUN apt install mariadb-client -y
 RUN apt install curl -y
 
 # container's config
+RUN service php7.4-fpm start
+
 WORKDIR /var/www/html
-RUN chmod 777 /var/www/html
+
+RUN sed -i -e 's/listen = .*/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf
 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN chmod 777 wp-cli.phar
@@ -20,8 +23,6 @@ RUN mv wp-cli.phar /usr/local/bin/wp-cli.phar
 
 COPY ./config/script.sh /
 RUN chmod 777 /script.sh
-
-RUN usermod -aG www-data root
 
 # port expose
 EXPOSE 9000

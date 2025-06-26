@@ -4,22 +4,25 @@ DOCKER_LOGIN=joleksia
 all : up
 
 create :
-	@mkdir -p /home/$(DOCKER_LOGIN)/data/wp
-	@chmod 777 /home/$(DOCKER_LOGIN)/data/wp
-	@mkdir -p /home/$(DOCKER_LOGIN)/data/mdb
-	@chmod 777 /home/$(DOCKER_LOGIN)/data/mdb
+	@mkdir -p	/home/$(DOCKER_LOGIN)/data/wp
+	@chmod 777	/home/$(DOCKER_LOGIN)/data/wp
+	@mkdir -p 	/home/$(DOCKER_LOGIN)/data/mdb
+	@chmod 777	/home/$(DOCKER_LOGIN)/data/mdb
 	@hostsed add 127.0.0.1 $(DOCKER_LOGIN).42.fr
 
 up : create
-	@docker compose -f $(DOCKER_COMPOSE) up -d --no-deps --build
+	@docker compose -f $(DOCKER_COMPOSE) up -d --no-deps --build --remove-orphans --wait
 
 down :
 	@docker compose -f $(DOCKER_COMPOSE) down
 
 clean :
-	@rm -rf /home/$(DOCKER_LOGIN)/data
 	@hostsed rm 127.0.0.1 $(DOCKER_LOGIN).42.fr
 	@docker system prune --all -f
+	@docker rm -q $$(docker ps -qa) 2> /dev/null || true
+	@docker rmi -f $$(docker images -qa) 2> /dev/null || true
+	@docker volume rm $$(docker volume ls -q) 2> /dev/null || true
+	@rm -rf	/home/$(DOCKER_LOGIN)/data
 
 fclean : down clean
 

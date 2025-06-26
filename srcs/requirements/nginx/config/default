@@ -1,23 +1,24 @@
 server {
     listen 443 ssl;
-    root /var/www/html/;
+	listen [::]:443 http2 ssl;
+   
+	root /var/www/html/;
     index index.php;
 
     ssl_certificate /etc/nginx/ssl/cert.crt;
     ssl_certificate_key /etc/nginx/ssl/private.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    
-    location ~ \.php$ {
-		include fastcgi_params;
-		include snippets/fastcgi-php.conf;
-		fastcgi_pass wordpress:9000;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
+    ssl_protocols TLSv1.3;
     
 	location / {
-		autoindex on;
-		try_files $uri $uri/ =404;
-	}
+        autoindex on;
+        autoindex_format html;
+        try_files $uri $uri/ /index.php?$args;
+    } 
+    
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass wordpress:9000;
+    }
 }
 
 

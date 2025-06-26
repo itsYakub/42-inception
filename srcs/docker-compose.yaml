@@ -1,49 +1,54 @@
-services:
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb/
-    volumes:
-    - mdb:/var/lib/mysql
-    env_file: .env
-    networks:
-    - inception
-    restart: on-failure
-  
-  wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress/
-    volumes:
-    - wp:/var/www/html
-    env_file: .env
-    networks:
-    - inception
-    restart: on-failure
-    depends_on:
-    - mariadb
-    ports:
-    - 80:80
-  
+services: 
   nginx:
     container_name: nginx
     build: ./requirements/nginx/
+    image: nginx
     volumes:
     - wp:/var/www/html
     networks:
     - inception
-    env_file: .env
-    restart: on-failure
     depends_on:
     - wordpress
     ports:
-    - 443:443
+    - "443:443"
+    env_file: .env
+    restart: on-failure
 
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress/
+    image: wordpress
+    volumes:
+    - wp:/var/www/html
+    networks:
+    - inception
+    depends_on:
+    - mariadb
+    env_file: .env
+    restart: on-failure
+  
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb/
+    image: mariadb
+    volumes:
+    - mdb:/var/lib/mysql
+    networks:
+    - inception
+    expose:
+    - "3306"
+    env_file: .env
+    restart: on-failure
+  
 volumes:
   wp:
+    driver: local
     driver_opts:
       device: /home/joleksia/data/wp
       o: "bind"
       type: "none"
   mdb:
+    driver: local
     driver_opts:
       device: /home/joleksia/data/mdb
       o: "bind"
