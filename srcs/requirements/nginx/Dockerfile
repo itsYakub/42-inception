@@ -7,6 +7,7 @@ RUN apt upgrade -y
 RUN apt install nginx -y
 RUN apt install openssl -y
 
+# container's config
 RUN adduser \
 	--system \
 	--no-create-home \
@@ -33,5 +34,5 @@ RUN chown -R www-data:www-data /var/www/html
 # port expose
 EXPOSE 443
 
-# server starting
+# service starting
 CMD [ "nginx", "-g", "daemon off;" ]

@@ -1,7 +1,7 @@
 # container's operating system
 FROM debian:bullseye
 
-# containers packages
+# container's packages
 RUN apt update -y
 RUN apt upgrade -y
 RUN apt install php -y
